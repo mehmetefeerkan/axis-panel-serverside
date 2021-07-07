@@ -15,7 +15,7 @@ var cors = require('cors');
 
 
 
-const localApi = 'http://194.31.59.244:3000/'
+const localApi = `http://${config.databaseip}:3000/`
 const userApi = 'http://localhost:5505/'
 const banlistApi = 'http://localhost:8415/'
 const dawpAdr = 'http://localhost:8409/'
@@ -69,7 +69,7 @@ app.get('/status/', function (req, res) {
 })
 
 app.get('/casanova/version/', function (req, res) { //initilize express
-    res.send(gethttp(`http://194.31.59.244:3000/casanova/versionInfo`))
+    res.send(gethttp(`http://${config.databaseip}:3000/casanova/versionInfo`))
 })
 app.get('/ephesus/didtofulltag/:id', function (req, res) { //initilize express
     const options = {
@@ -169,31 +169,31 @@ app.get('/dawpActions/overrideCol/:token/:overrideName', function (req, res) { /
         }
     }
     console.log("patching " + token + " with " + svName)
-    axios.patch(`http://194.31.59.244:3000/servers/${token}`, data)
+    axios.patch(`http://${config.databaseip}:3000/servers/${token}`, data)
     res.send(200)
 })
 app.get('/dawpActions/addColServer/:collection/:token', function (req, res) { //initilize express
     token = req.params.token
     collection = req.params.collection
-    let coll_ = gethttp(`http://194.31.59.244:3000/collections/${collection}`)
+    let coll_ = gethttp(`http://${config.databaseip}:3000/collections/${collection}`)
     let colserverarray = coll_.servers
     colserverarray.push(token)
     var data = {
         servers: colserverarray
     }
-    axios.patch(`http://194.31.59.244:3000/collections/${collection}`, data)
+    axios.patch(`http://${config.databaseip}:3000/collections/${collection}`, data)
     res.send(200)
 })
 app.get('/dawpActions/remColServer/:collection/:token', function (req, res) { //initilize express
     token = req.params.token
     collection = req.params.collection
-    let coll_ = gethttp(`http://194.31.59.244:3000/collections/${collection}`)
+    let coll_ = gethttp(`http://${config.databaseip}:3000/collections/${collection}`)
     let colserverarray = coll_.servers
     colserverarray = colserverarray.filter(e => e !== token); // will return ['A', 'C']
     var data = {
         servers: colserverarray
     }
-    axios.patch(`http://194.31.59.244:3000/collections/${collection}`, data)
+    axios.patch(`http://${config.databaseip}:3000/collections/${collection}`, data)
     res.send(200)
 })
 app.get('/banlist/:apireq', function (req, res) { //initilize express
@@ -226,7 +226,7 @@ app.get('/collAuth/:dcid/:pass', function (req, res) { //initilize express
     res.send(JSON.parse(getHttpNoJson(`${userApi}colAuthentication/${dcid}/${pass}`)))
 })
 
-app.listen(80, '194.31.59.4'); //define which ip and port for the express to listen on.
+app.listen(80, `${config.webserverip}`); //define which ip and port for the express to listen on.
 
 
 function gethttp(url) {

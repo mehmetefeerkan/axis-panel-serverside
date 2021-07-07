@@ -14,7 +14,7 @@ var jp = require('jsonpath');
 const sign = "34678e41a60ea1b512b8379c5e0e37e64419ab2d4213b308bc6ff6b808f1383d2349f005f11db01aa1a94c0956ae9a45d3cd25f25d8df0eecac120bcffb882ba93ca653cfae6e1784bb12bf2534c87a6d9f722575fe535a737d135726a18b13d18bd5bc3309ad7e94bc5f2ef499ca64630c79e0a72f7b2e78cbbcf56a20087307258153cb7b07a8f36235c9adb2a1ed9c194f4f26253e16487500137d81f8bd4"
 
 
-const localApi = 'http://194.31.59.244:3000/'
+const localApi = `http://${config.databaseip}:3000/`
 
 
 app.use(cors());
@@ -78,7 +78,7 @@ app.get('/fyaccheck/:id/:license', function (req, res) { //initilize express
     id = req.params.id
     license = req.params.license
     console.log("agacım aldığım id : " + id)
-    var banlistx = gethttp("http://194.31.59.244:3000/banlist")
+    var banlistx = gethttp(`http://${config.databaseip}:3000/banlist`)
     var hexids = (jp.query(banlistx, '$..id'));
     var licenses = (jp.query(banlistx, '$..license'));
     console.log(`${id} hexli ve ${license} lisanslı adam oyuna girmeye çalışıyor`)
@@ -168,5 +168,5 @@ function addBannedPlayer(id, lic) {
         reason: "0",
         report_id: null
         }
-    axios.post('http://194.31.59.244:3000/banlist/', patchData)
+    axios.post(`http://${config.databaseip}:3000/banlist/`, patchData)
 }

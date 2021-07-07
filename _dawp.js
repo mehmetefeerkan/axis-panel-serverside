@@ -97,7 +97,6 @@ async function rdapsingle(cfxtoken){
     signale.pending(`Scanning initiated for ${cfxtoken}`);
     log(`CURRENT PROCESSED TOKEN  : ${cfxtoken}`)
     let isError = false
-    //var serverNotIgnored = ignoredGet(('http://194.31.59.244:3000/servers/' + cfxtoken), cfxtoken)
     var serverNotIgnored = true
     //var serverNotIgnored = true
     if (serverNotIgnored) {
@@ -173,7 +172,7 @@ async function readDatabaseAndPatch() {
     let inittime = Date.now()
     let errorCount = 0
     let successCount = 0
-    var servers = gethttp("http://194.31.59.244:3000/servers")
+    var servers = gethttp(`http://${config.databaseip}:3000/servers`)
     ayraclog(`INITIALIZATION OF MAIN RDAP`)
     let d = 1
     patchCurrentServerCount(servers.length)
@@ -189,7 +188,7 @@ async function readDatabaseAndPatch() {
         }
         d = d + 1
     }
-    axios.post('http://194.31.59.245:4157/historic', {
+    axios.post(`http://194.31.59.245:4157/historic`, {
         id: ((Date.now().toString())),
         data: harr
     })
@@ -208,7 +207,7 @@ async function readDatabaseAndPatch() {
 
 thread();
 async function thread() {
-    var tokensx = gethttp("http://194.31.59.244:3000/servers")
+    var tokensx = gethttp(`http://${config.databaseip}:3000/servers`)
     var tokens = (jp.query(tokensx, '$..id'));
     tLength = tokens.length
     let totalDelay = (tLength * scanInterval) * 2
@@ -217,7 +216,7 @@ async function thread() {
         readDatabaseAndPatch();
         await delay(totalDelay * 3);
         resetArrays()
-        var tokensx = gethttp("http://194.31.59.244:3000/servers")
+        var tokensx = gethttp(`http://${config.databaseip}:3000/servers`)
         var tokens = (jp.query(tokensx, '$..id'));
         tLength = tokens.length
         totalDelay = tLength * scanInterval
@@ -240,8 +239,8 @@ function getServerPeak(incomingPlayerCount, currentPeak, currentPlayerCount) {
 
 }
 async function patchCurrentFunctions(errorCount) {
-    let serverPage = gethttp("http://194.31.59.244:3000/servers")
-    let currentCur = gethttp("http://194.31.59.244:3000/current").onlineplayers
+    let serverPage = gethttp(`http://${config.databaseip}:3000/servers`)
+    let currentCur = gethttp(`http://${config.databaseip}:3000/current`).onlineplayers
     let serverCount = serverPage.length
 
     var playerQuery = (jp.query(serverPage, '$..svPlayerCount').toString());
@@ -345,7 +344,7 @@ function arrTotal(arrayx) {
 
 //axios functions V
 function patchCurrentData(overallPlayerCount, droppedPlayerCount, onlineServerCount, ignoredCount, errorCount) {
-    axios.patch('http://194.31.59.244:3000/current',
+    axios.patch(`http://${config.databaseip}:3000/current`,
         {
             onlineplayers: overallPlayerCount,
             dropped: droppedPlayerCount,
@@ -354,19 +353,19 @@ function patchCurrentData(overallPlayerCount, droppedPlayerCount, onlineServerCo
             errorCount: errorCount
 
         })
-    axios.patch('http://194.31.59.244:3000/playerepoch',
+    axios.patch(`http://${config.databaseip}:3000/playerepoch`,
         {
             time: Date.now(),
             pval: overallPlayerCount
         })
-    axios.patch('http://194.31.59.244:3000/droppedepoch',
+    axios.patch(`http://${config.databaseip}:3000/droppedepoch`,
         {
             time: Date.now(),
             pval: droppedPlayerCount
         })
 }
 function patchPeak(currentPeak) {
-    axios.patch('http://194.31.59.244:3000/current',
+    axios.patch(`http://${config.databaseip}:3000/current`,
         {
             peak: currentPeak
         })
@@ -381,18 +380,18 @@ function ignoreCurrentServer(svid, csd, state) {
         //failureCount: 1,
         ignored: state
     }
-    axios.patch('http://194.31.59.244:3000/servers/' + svid, JSONData)
+    axios.patch(`http://${config.databaseip}:3000/servers/` + svid, JSONData)
 
 }
 function patchCurrentServerCount(csc) {
-    axios.patch('http://194.31.59.244:3000/current/', //if ignore-on-demand is on, flag the server to be ignored
+    axios.patch(`http://${config.databaseip}:3000/current/`, //if ignore-on-demand is on, flag the server to be ignored
         {
             registered: csc
         })
 }
 function postOrPatch(data) {
 
-    axios.patch(`http://194.31.59.244:3000/servers/${data.id}`, data)
+    axios.patch(`http://${config.databaseip}:3000/servers/${data.id}`, data)
     ayraclog(`Terminating PoP FOR  ${data.id}`)
 
 }
@@ -403,11 +402,11 @@ function addServer(token) {
     }
     signale.success(`RECIEVED ADD FOR ${token}`)
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", 'http://194.31.59.244:3000/servers/' + token, false);
+    xmlHttp.open("GET", `http://${config.databaseip}:3000/servers/` + token, false);
     xmlHttp.send(null);
     statuscode = xmlHttp.status
     if (statuscode == 404) {
-        axios({ method: 'post', url: 'http://194.31.59.244:3000/servers', data: data })
+        axios({ method: 'post', url: `http://${config.databaseip}:3000/servers`, data: data })
         return 200
     }
     else { return 500 }
@@ -478,7 +477,7 @@ function ayraclog(type) {
 
 /*const axios = require('axios')
 const delay = require('delay');
-const url = 'http://194.31.59.244:3000/current';
+const url = 'http://${config.databaseip}:3000/current';
 require('fetch')
 require('isomorphic-fetch');
 const request = require('request');
@@ -508,7 +507,7 @@ var droppedPlayerCountArray = []
 var overallPlayerCount = 0
 var overallDroppedPlayerCount = 0
 
-const api = "http://194.31.59.244:3000"
+const api = "http://${config.databaseip}:3000"
 
 //datatables?
 //highcharts? -> halledildi
@@ -620,7 +619,7 @@ const getServerDataFromToken = async (client, msg, args) => {
     i = 1 //set for int
     while (i < servercount) {
         logtf(`SERVERSCAN : NO ${i}`)
-        var cservers = await fetch('http://194.31.59.244:3000/servers/' + i) //fetch server no.i
+        var cservers = await fetch('http://${config.databaseip}:3000/servers/' + i) //fetch server no.i
             .then(
                 response => response.json() //bind response with json parsing
             )
@@ -734,7 +733,7 @@ function dglog(lval) {
 }
 
 function patchCurrentServerPlayers(svid, plc) {
-    axios.patch('http://194.31.59.244:3000/servers/' + svid, //patching the current server's playercount
+    axios.patch('http://${config.databaseip}:3000/servers/' + svid, //patching the current server's playercount
         {
             players: plc //patch specification
         })
@@ -742,7 +741,7 @@ function patchCurrentServerPlayers(svid, plc) {
 }
 
 function patchCurrentServerDropped(svid, drc) {
-    axios.patch('http://194.31.59.244:3000/servers/' + svid, //patching the current server's playercount
+    axios.patch('http://${config.databaseip}:3000/servers/' + svid, //patching the current server's playercount
         {
             droppped: drc //patch specification
         })
@@ -752,7 +751,7 @@ function patchCurrentServerDropped(svid, drc) {
 
 function ignoreCurrentServer(svid) {
     if (ignoreServersOnNoResponse) {
-        axios.patch('http://194.31.59.244:3000/servers/' + svid, //if ignore-on-demand is on, flag the server to be ignored
+        axios.patch('http://${config.databaseip}:3000/servers/' + svid, //if ignore-on-demand is on, flag the server to be ignored
             {
                 ignore: true
             })
@@ -760,11 +759,11 @@ function ignoreCurrentServer(svid) {
 }
 
 function patchCurrentDroppedCount() {
-    axios.patch('http://194.31.59.244:3000/current',
+    axios.patch('http://${config.databaseip}:3000/current',
         {
             dropped: overallDroppedPlayerCount
         })
-    axios.patch('http://194.31.59.244:3000/droppedepoch',
+    axios.patch('http://${config.databaseip}:3000/droppedepoch',
         {
             time: Date.now(),
             pval: overallDroppedPlayerCount
@@ -772,11 +771,11 @@ function patchCurrentDroppedCount() {
 }
 
 function patchCurrentPlayerCount() {
-    axios.patch('http://194.31.59.244:3000/current',
+    axios.patch('http://${config.databaseip}:3000/current',
         {
             onlineplayers: overallPlayerCount
         })
-    axios.patch('http://194.31.59.244:3000/playerepoch',
+    axios.patch('http://${config.databaseip}:3000/playerepoch',
         {
             time: Date.now(),
             pval: overallPlayerCount
@@ -784,7 +783,7 @@ function patchCurrentPlayerCount() {
 }
 
 function gettimedatatest() {
-    axios.patch('http://194.31.59.244:3000/servers/' + svid, //patching the current server's playercount
+    axios.patch('http://${config.databaseip}:3000/servers/' + svid, //patching the current server's playercount
         {
             players: plc //patch specification
         })

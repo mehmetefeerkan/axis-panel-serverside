@@ -12,7 +12,7 @@ var md5 = require('md5');
 var crypto = require("crypto");
 
 
-const localApi = 'http://194.31.59.244:3000/'
+const localApi = `http://${config.databaseip}:3000/`
 
 const { Webhook, MessageBuilder } = require('discord-webhook-node');
 const hook = new Webhook("https://discord.com/api/webhooks/829024969806577714/pBXOYO38Td_DXPLe5ZqAOx4LrebTzeZySrrJZwMNemOrh3tXHWiTiRghSS4fkHxfEOwn");
@@ -36,7 +36,7 @@ app.get('/fyacLogin/:token/', function (req, res) {
 app.get('/colAuthentication/:dcid/:pass', function (req, res) { //initilize express
     dcid = req.params.dcid
     pass = req.params.pass
-    const authRp = httpGet(`http://194.31.59.244:3000/colauth/${dcid}`)
+    const authRp = httpGet(`http://${config.databaseip}:3000/colauth/${dcid}`)
     if ((authRp !== 404)){
         if((authRp.pass) === pass){
             var data = {
