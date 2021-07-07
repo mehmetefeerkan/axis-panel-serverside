@@ -68,9 +68,6 @@ app.get('/status/', function (req, res) {
     if (status) { res.send(200) }
 })
 
-app.get('/casanova/version/', function (req, res) { //initilize express
-    res.send(gethttp(`http://${config.databaseip}:3000/casanova/versionInfo`))
-})
 app.get('/ephesus/didtofulltag/:id', function (req, res) { //initilize express
     const options = {
         method: 'GET',
@@ -91,55 +88,6 @@ app.get('/ephesus/didtofulltag/:id', function (req, res) { //initilize express
 app.get('/frontendProxy/:token/', function (req, res) { //initilize express
     token = req.params.token // get the value of :token/ 
     res.send(gethttp(`https://servers-frontend.fivem.net/api/servers/single/${token}`))
-})
-
-app.get('/imperial/consolep/', function (req, res) { //initilize express
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    /*if (ip !== "46.4.193.234") {
-        res.send(403)
-        return
-    }*/
-    res.send(getHttpNoJson(`http://46.4.193.234:55660/console`))
-})
-app.get('/imperial/resourcep/', function (req, res) { //initilize express
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    /*
-    if (ip !== "46.4.193.234") {
-        res.send(403)
-        return
-    }*/
-    res.send(getHttpNoJson(`http://46.4.193.234:55660/resources`))
-})
-app.post('/imperial/heartbeat/', function (req, res) { //initilize express
-    console.log(req.body)
-    res.send(200)
-})
-app.get('/imperial/players/', function (req, res) { //initilize express
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    /*
-    if (ip !== "46.4.193.234") {
-        res.send(403)
-        return
-    }*/
-    res.send(gethttp(`http://46.4.193.234:55660`))
-})
-app.get('/imperial/banPlayer/:pid/:reason', function (req, res) { //initilize express
-    pid_ = req.params.pid
-    reason_ = req.params.reason
-    res.send(gethttp(`http://46.4.193.234:55660/banPlayer/${pid_}/${reason_}`))
-})
-app.get('/imperial/com/:command/:define', function (req, res) { //initilize express
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    command = req.params.command // get the value of :token/ 
-    define = req.params.define // get the value of :token/ 
-
-    /*
-    if (ip !== "46.4.193.234") {
-        res.send(403)
-        return
-    }*/
-
-    res.send(getHttpNoJson(`http://46.4.193.234:55660/${command}/${define}`))
 })
 
 
