@@ -1,0 +1,35 @@
+{
+  "name": "backend-details",
+  "version": "1.0.0",
+  "description": "backend-v3",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "child_process": "^1.0.2",
+    "console-title": "^1.1.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "delay": "^5.0.0",
+    "discord-webhook-node": "^1.1.8",
+    "discord.js": "^12.5.3",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "http": "0.0.1-security",
+    "isomorphic-fetch": "^3.0.0",
+    "jsonpath": "^1.1.0",
+    "md5": "^2.3.0",
+    "request": "^2.88.2",
+    "signale": "^1.4.0",
+    "socket.io": "^4.0.1",
+    "tcp-ping": "^0.1.1",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "json-server": "^0.16.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
